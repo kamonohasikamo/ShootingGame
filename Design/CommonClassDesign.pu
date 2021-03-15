@@ -1,0 +1,36 @@
+@startuml
+title Commonクラス図
+
+enum Scene
+{
+	START
+	GAME
+	RESULT
+}
+
+enum Key
+{
+	NONE
+	LEFT
+	RIGHT
+	SPACE
+	LEFTANDSPACE
+	RIGHTANDSPACE
+}
+
+
+class SceneManager
+{
+	- Scene nowScene
+	+ void nextScene()
+	+ Scene getNowScene()
+}
+
+class InputManager
+{
+	- Key nowKey
+	- void setKey(Key key)
+	+ Key getKey()
+}
+
+@enduml

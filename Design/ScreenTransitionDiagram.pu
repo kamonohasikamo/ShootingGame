@@ -1,0 +1,10 @@
+@startuml
+title 画面遷移図
+[*] --> Start
+
+Start --> Game : Enter key
+Game --> Result : Auto
+Result --> Start : Back key
+Result --> Game : Enter key
+
+@enduml

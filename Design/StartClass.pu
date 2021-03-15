@@ -1,0 +1,12 @@
+@startuml
+title Start画面クラス図
+
+class StartUI
+{
+	string titleText
+	string enterText
+	void showText()
+	void onPressEnter()
+}
+
+@enduml

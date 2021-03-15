@@ -1,0 +1,18 @@
+@startuml
+title Resultクラス図
+
+class ResultUI
+{
+	string scoreText
+	void update()
+}
+
+class ResultManager
+{
+	void update()
+}
+
+ResultUI -- ScoreManager
+ResultManager -- InputManager
+ResultManager -- SceneManager
+@enduml

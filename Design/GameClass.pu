@@ -1,0 +1,71 @@
+@startuml
+title Game画面クラス図
+
+class Pos << (P,#FF7700) 構造体 >>
+{
+	double x
+	double y
+}
+
+class PlayerMove
+{
+	Pos playerPos
+	Pos getPlayerPos()
+	void update()
+	void init()
+}
+
+class PlayerUI
+{
+	int width
+	int height
+	void showImage()
+}
+
+abstract Enemy
+{
+	Pos enemyPos
+	bool enemyFlag
+	{abstract} void init()
+	void destroy()
+}
+
+class NomalEnemy
+{
+	void init()
+	void showImage()
+}
+
+class StrongEnemy
+{
+	void init()
+	void showImage()
+}
+
+class GunData
+{
+	Pos gunPos
+	void GunData(Pos pos)
+	void update()
+	bool isHit()
+	bool isOver()
+}
+
+class GameUI
+{
+	string scoreText
+	void init()
+	void update()
+}
+
+PlayerMove -- PlayerUI
+Enemy <|-- NomalEnemy
+Enemy <|-- StrongEnemy
+Enemy -- GunData
+PlayerMove -- Enemy
+Pos -- PlayerMove
+Pos -- Enemy
+Pos -- GunData
+GunData -- ScoreManager
+GameUI -- ScoreManager
+@enduml

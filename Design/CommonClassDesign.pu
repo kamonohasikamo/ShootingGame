@@ -18,7 +18,6 @@ enum Key
 	RIGHTANDSPACE
 }
 
-
 class SceneManager
 {
 	- Scene nowScene
@@ -30,7 +29,18 @@ class InputManager
 {
 	- Key nowKey
 	- void setKey(Key key)
+	- void update()
 	+ Key getKey()
 }
 
+class ScoreManager
+{
+	- int score
+	void init()
+	+ void addScore(int score)
+	+ int getScore()
+}
+
+Scene -- SceneManager
+Key   -- InputManager
 @enduml

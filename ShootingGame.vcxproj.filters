@@ -51,5 +51,13 @@
     <ClCompile Include="ResultUI.cpp">
       <Filter>ソース ファイル\Result</Filter>
     </ClCompile>
+    <ClCompile Include="Define.cpp">
+      <Filter>ソース ファイル\Manager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Image\player.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
   </ItemGroup>
 </Project>

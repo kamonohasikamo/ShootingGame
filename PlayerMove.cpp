@@ -1,23 +1,49 @@
 #include "DxLib.h"
 #include <string>
 #include "Pos.cpp"
+#include "Define.cpp"
 
 using namespace std;
 
 class PlayerMove
 {
 private:
-	Pos* playerPos;
+	Pos playerPos;
+	Define DEFINE;
 public:
-	PlayerMove()
-	{
-		playerPos = new Pos(0, 0);
-	}
-
 	Pos getPlayerPos()
 	{
-		return *playerPos;
+		return playerPos;
 	}
 
+	void setPlayerPos(Pos pos)
+	{
+		playerPos = pos;
+	}
 
+	void setPlayerPoxX(double x)
+	{
+		playerPos.x = x;
+	}
+
+	void setPlayerPosY(double y)
+	{
+		playerPos.y = y;
+	}
+
+	void moveLeftX()
+	{
+		if (playerPos.x > 3)
+		{
+			playerPos.x -= 3;
+		}
+	}
+
+	void moveRightX()
+	{
+		if (playerPos.x + DEFINE.PLAYER_WIDTH < DEFINE.WIDTH)
+		{
+			playerPos.x += 3;
+		}
+	}
 };

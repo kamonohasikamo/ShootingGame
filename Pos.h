@@ -1,5 +1,4 @@
-#include "DxLib.h"
-
+#pragma once
 class Pos
 {
 public:

@@ -1,6 +1,6 @@
 #include "DxLib.h"
 #include <string>
-#include "Pos.cpp"
+#include "Pos.h"
 #include "Define.cpp"
 
 using namespace std;

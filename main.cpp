@@ -1,11 +1,17 @@
 #include "DxLib.h"
 #include "PlayerMove.cpp"
+#include "GunMove.cpp"
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
 PlayerMove playerMove;
 Define DEFINE;
+vector<GunMove> gun(DEFINE.MAX_GUN_NUM);
+
+int gunImage = -1;
+int playerImage = -1;
 
 void Init()
 {
@@ -13,6 +19,12 @@ void Init()
 	playerInitPos.x = (DEFINE.WIDTH / 2);
 	playerInitPos.y = (DEFINE.HEIGHT - 50);
 	playerMove.setPlayerPos(playerInitPos);
+	gunImage = LoadGraph("image/gun.png");
+	playerImage = LoadGraph("image/player.png");
+	for (int i = 0; i < DEFINE.MAX_GUN_NUM; i++)
+	{
+		gun[i].setIsShot(false);
+	}
 }
 
 // プログラムは WinMain から始まります
@@ -32,8 +44,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetDrawScreen(DX_SCREEN_BACK);
 	
 	Init();
-	int playerImage = LoadGraph("image/player.png");
 	int Key;
+	int roopCount = 0;
 	
 	// GameMainRoop
 	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
@@ -55,14 +67,43 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			playerMove.moveLeftX();
 		}
 
+		// SPACEキーを押したら弾発射
+		if (Key & PAD_INPUT_10)
+		{
+			if (roopCount % 6 == 0)
+			{
+				for (int i = 0; i < DEFINE.MAX_GUN_NUM; i++)
+				{
+					if (!gun[i].getIsShot())
+					{
+						gun[i].setIsShot(true);
+						gun[i].setGunPos(playerMove.getPlayerPos());
+						break;
+					}
+				}
+			}
+		}
+
 		// 画面を初期化する
 		ClearDrawScreen();
 
 		// show Player
 		DrawGraph(playerMove.getPlayerPos().x, playerMove.getPlayerPos().y, playerImage, true);
 
+		// 弾の移動と表示
+		for (int i = 0; i < DEFINE.MAX_GUN_NUM; i++)
+		{
+			if (gun[i].getIsShot())
+			{
+				gun[i].move();
+				DrawGraph(gun[i].getGunPos().x, gun[i].getGunPos().y, gunImage, true);
+			}
+		}
+
 		// 裏画面の内容を表画面に反映させる
 		ScreenFlip();
+
+		roopCount = (roopCount > 600) ? 0 : roopCount + 1;
 	}
 
 	DxLib_End();

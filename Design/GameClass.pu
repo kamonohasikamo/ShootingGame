@@ -1,7 +1,7 @@
 @startuml
 title Game画面クラス図
 
-class Pos << (P,#FF7700) 構造体 >>
+class Pos << (P,#FF7700) ヘッダ >>
 {
 	double x
 	double y
@@ -42,13 +42,15 @@ class StrongEnemy
 	void showImage()
 }
 
-class GunData
+class GunMove
 {
 	Pos gunPos
-	void GunData(Pos pos)
-	void update()
-	bool isHit()
-	bool isOver()
+	bool isShot
+	void move()
+	void setGunPos(Pos pos)
+	void setIsShot(bool flag)
+	Pos getGunPos()
+	bool getIsShot()
 }
 
 class GameUI
@@ -61,11 +63,11 @@ class GameUI
 PlayerMove -- PlayerUI
 Enemy <|-- NomalEnemy
 Enemy <|-- StrongEnemy
-Enemy -- GunData
+Enemy -- GunMove
 PlayerMove -- Enemy
 Pos -- PlayerMove
 Pos -- Enemy
-Pos -- GunData
-GunData -- ScoreManager
+Pos -- GunMove
+GunMove -- ScoreManager
 GameUI -- ScoreManager
 @enduml

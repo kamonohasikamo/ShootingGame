@@ -1,17 +1,23 @@
 #include "DxLib.h"
 #include "PlayerMove.cpp"
 #include "GunMove.cpp"
+#include "NomalEnemy.cpp"
+#include "StrongEnemy.cpp"
 #include <iostream>
 #include <vector>
 
 using namespace std;
 
 PlayerMove playerMove;
+vector<NomalEnemy> nEnemy(5);
+vector<StrongEnemy> sEnemy(1);
 Define DEFINE;
 vector<GunMove> gun(DEFINE.MAX_GUN_NUM);
 
 int gunImage = -1;
 int playerImage = -1;
+int nomalEnemyImage = -1;
+int strongEnemyImage = -1;
 
 void Init()
 {
@@ -21,10 +27,27 @@ void Init()
 	playerMove.setPlayerPos(playerInitPos);
 	gunImage = LoadGraph("image/gun.png");
 	playerImage = LoadGraph("image/player.png");
+	nomalEnemyImage = LoadGraph("image/NomalEnemy.png");
+	strongEnemyImage = LoadGraph("image/StrongEnemy.png");
 	for (int i = 0; i < DEFINE.MAX_GUN_NUM; i++)
 	{
 		gun[i].setIsShot(false);
 	}
+
+	for (int i = 0; i < 5; i++)
+	{
+		nEnemy[i].createEnemy(60 * (i + 1), 80 * (i + 1), 300 * (i + 1));
+		Pos nEnemyInitPos;
+		nEnemyInitPos.x = 50 * (i + 1);
+		nEnemyInitPos.y = -40;
+		nEnemy[i].setEnemyPos(nEnemyInitPos);
+	}
+
+	sEnemy[0].createEnemy(2000, 2600, 32000);
+	Pos sEnemyInitPos;
+	sEnemyInitPos.x = (DEFINE.WIDTH / 2);
+	sEnemyInitPos.y = -40;
+	sEnemy[0].setEnemyPos(sEnemyInitPos);
 }
 
 // プログラムは WinMain から始まります
@@ -77,7 +100,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					if (!gun[i].getIsShot())
 					{
 						gun[i].setIsShot(true);
-						gun[i].setGunPos(playerMove.getPlayerPos());
+						Pos gunInitPos = playerMove.getPlayerPos();
+						gunInitPos.x += (DEFINE.PLAYER_WIDTH / 2);
+						gun[i].setGunPos(gunInitPos);
 						break;
 					}
 				}
@@ -96,14 +121,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			if (gun[i].getIsShot())
 			{
 				gun[i].move();
-				DrawGraph(gun[i].getGunPos().x, gun[i].getGunPos().y, gunImage, true);
+				Pos gunPos = gun[i].getGunPos();
+				DrawGraph(gunPos.x, gunPos.y, gunImage, true);
+			}
+		}
+
+		for (int i = 0; i < 5; i++)
+		{
+			nEnemy[i].move(roopCount);
+			if (nEnemy[i].getIsShow())
+			{
+				Pos enemyPos = nEnemy[i].getEnemyPos();
+				DrawGraph(enemyPos.x, enemyPos.y, nomalEnemyImage, true);
 			}
 		}
 
 		// 裏画面の内容を表画面に反映させる
 		ScreenFlip();
 
-		roopCount = (roopCount > 600) ? 0 : roopCount + 1;
+		roopCount++;
 	}
 
 	DxLib_End();

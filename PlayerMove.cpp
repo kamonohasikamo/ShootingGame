@@ -1,7 +1,7 @@
 #include "DxLib.h"
 #include <string>
 #include "Pos.h"
-#include "Define.cpp"
+#include "Define.h"
 
 using namespace std;
 

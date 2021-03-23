@@ -153,16 +153,14 @@
   <ItemGroup>
     <ClCompile Include="Define.h" />
     <ClCompile Include="Enemy.h" />
-    <ClCompile Include="GunMove.cpp" />
+    <ClCompile Include="GunMove.h" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="NomalEnemy.cpp" />
     <ClCompile Include="PlayerMove.cpp" />
     <ClCompile Include="ResultUI.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="ScoreManager.cpp" />
     <ClCompile Include="StartUI.cpp" />
-    <ClCompile Include="StrongEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Image\player.png" />

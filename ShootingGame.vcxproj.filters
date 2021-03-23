@@ -51,16 +51,10 @@
     <ClCompile Include="Define.h">
       <Filter>ソース ファイル\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="GunMove.cpp">
+    <ClCompile Include="GunMove.h">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
     <ClCompile Include="Enemy.h">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="NomalEnemy.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="StrongEnemy.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
   </ItemGroup>

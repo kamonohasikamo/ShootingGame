@@ -1,16 +1,14 @@
 #include "DxLib.h"
 #include "PlayerMove.cpp"
-#include "GunMove.cpp"
-#include "NomalEnemy.cpp"
-#include "StrongEnemy.cpp"
+#include "GunMove.h"
+#include "Enemy.h"
 #include <iostream>
 #include <vector>
 
 using namespace std;
 
 PlayerMove playerMove;
-vector<NomalEnemy> nEnemy(5);
-vector<StrongEnemy> sEnemy(1);
+vector<Enemy> enemy(5);
 Define DEFINE;
 vector<GunMove> gun(DEFINE.MAX_GUN_NUM);
 
@@ -18,6 +16,7 @@ int gunImage = -1;
 int playerImage = -1;
 int nomalEnemyImage = -1;
 int strongEnemyImage = -1;
+int enemyGunImage = -1;
 
 void Init()
 {
@@ -29,6 +28,7 @@ void Init()
 	playerImage = LoadGraph("image/player.png");
 	nomalEnemyImage = LoadGraph("image/NomalEnemy.png");
 	strongEnemyImage = LoadGraph("image/StrongEnemy.png");
+	enemyGunImage = LoadGraph("image/EnemyGun.png");
 	for (int i = 0; i < DEFINE.MAX_GUN_NUM; i++)
 	{
 		gun[i].setIsShot(false);
@@ -36,18 +36,14 @@ void Init()
 
 	for (int i = 0; i < 5; i++)
 	{
-		nEnemy[i].createEnemy(60 * (i + 1), 80 * (i + 1), 300 * (i + 1));
+		enemy[i].createEnemy(60 * (i + 1), 80 * (i + 1), 300 * (i + 1), 90 * (i + 1), ENEMYTYPE::nomal);
 		Pos nEnemyInitPos;
 		nEnemyInitPos.x = 50 * (i + 1);
 		nEnemyInitPos.y = -40;
-		nEnemy[i].setEnemyPos(nEnemyInitPos);
+		enemy[i].setEnemyPos(nEnemyInitPos);
+		enemy[i].setShotData(SHOTPATTERN::nomal, 5.0);
 	}
 
-	sEnemy[0].createEnemy(2000, 2600, 32000);
-	Pos sEnemyInitPos;
-	sEnemyInitPos.x = (DEFINE.WIDTH / 2);
-	sEnemyInitPos.y = -40;
-	sEnemy[0].setEnemyPos(sEnemyInitPos);
 }
 
 // ƒvƒƒOƒ‰ƒ€‚Í WinMain ‚©‚çŽn‚Ü‚è‚Ü‚·
@@ -128,11 +124,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		for (int i = 0; i < 5; i++)
 		{
-			nEnemy[i].move(roopCount);
-			if (nEnemy[i].getIsShow())
+			enemy[i].move(roopCount);
+			enemy[i].shotGun(roopCount);
+			if (enemy[i].getIsShow())
 			{
-				Pos enemyPos = nEnemy[i].getEnemyPos();
+				Pos enemyPos = enemy[i].getEnemyPos();
 				DrawGraph(enemyPos.x, enemyPos.y, nomalEnemyImage, true);
+			}
+			for (int j = 0; j < 30; j++)
+			{
+				if (enemy[i].gunData[j].isShot)
+				{
+					DrawGraph(enemy[i].gunData[j].gunPos.x, enemy[i].gunData[j].gunPos.y, enemyGunImage, true);
+				}
 			}
 		}
 

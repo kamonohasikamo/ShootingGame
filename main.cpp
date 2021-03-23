@@ -2,7 +2,11 @@
 #include "PlayerMove.cpp"
 #include "GunMove.h"
 #include "Enemy.h"
+#include <fstream>
 #include <iostream>
+#include <string>
+#include <sstream>
+#include <istream>
 #include <vector>
 
 using namespace std;
@@ -34,32 +38,59 @@ void Init()
 		gun[i].setIsShot(false);
 	}
 
-	for (int i = 0; i < 5; i++)
+	ifstream ifs("EnemyData/EnemyData.txt");
+	string str;
+	if (ifs.fail())
 	{
-		enemy[i].createEnemy(60 * (i + 1), 80 * (i + 1), 300 * (i + 1), 90 * (i + 1), ENEMYTYPE::nomal);
-		Pos nEnemyInitPos;
-		nEnemyInitPos.x = 50 * (i + 1);
-		nEnemyInitPos.y = -40;
-		enemy[i].setEnemyPos(nEnemyInitPos);
-		enemy[i].setShotData(SHOTPATTERN::nomal, 5.0);
+		for (int i = 0; i < 5; i++)
+		{
+			enemy[i].createEnemy(60 * (i + 1), 80 * (i + 1), 300 * (i + 1), 90 * (i + 1), ENEMYTYPE::nomal);
+			Pos nEnemyInitPos;
+			nEnemyInitPos.x = 50 * (i + 1);
+			nEnemyInitPos.y = -40;
+			enemy[i].setEnemyPos(nEnemyInitPos);
+			enemy[i].setShotData(SHOTPATTERN::nomal, 5.0);
+		}
 	}
-
+	else
+	{
+		int index = -2;
+		while (getline(ifs, str))
+		{
+			index++;
+			if (index == -1) continue; // first line is comment
+			if (index > 4) break; // enemy num over is break;
+			auto list = vector<int>();
+			stringstream ss{str};
+			string buf;
+			while(getline(ss, buf, ','))
+			{
+				list.push_back(stod(buf));
+			}
+			enemy[index].createEnemy(list[0], list[1], list[2], list[3], ENEMYTYPE::nomal);
+			Pos nEnemyInitPos;
+			nEnemyInitPos.x = 50 * (index + 1);
+			nEnemyInitPos.y = -40;
+			enemy[index].setEnemyPos(nEnemyInitPos);
+			enemy[index].setShotData(SHOTPATTERN::nomal, 5.0);
+		}
+	}
 }
 
-// ƒvƒƒOƒ‰ƒ€‚Í WinMain ‚©‚çn‚Ü‚è‚Ü‚·
+// ï¿½vï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ WinMain ï¿½ï¿½ï¿½ï¿½nï¿½Ü‚ï¿½Ü‚ï¿½
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	// ‰æ–Êƒ‚[ƒh‚ÌƒZƒbƒg
+	// ï¿½ï¿½Êƒï¿½ï¿½[ï¿½hï¿½ÌƒZï¿½bï¿½g
 	SetGraphMode(DEFINE.WIDTH, DEFINE.HEIGHT, 16);
 	
-	// windowƒ‚[ƒhFtrue
+	// windowï¿½ï¿½ï¿½[ï¿½hï¿½Ftrue
 	ChangeWindowMode(true);
-	if (DxLib_Init() == -1)	// ‚c‚wƒ‰ƒCƒuƒ‰ƒŠ‰Šú‰»ˆ—
+	if (DxLib_Init() == -1)	// ï¿½cï¿½wï¿½ï¿½ï¿½Cï¿½uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	{
-		return -1;	// ƒGƒ‰[‚ª‹N‚«‚½‚ç’¼‚¿‚ÉI—¹
+		return -1;	// ï¿½Gï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ç’¼ï¿½ï¿½ï¿½ÉIï¿½ï¿½
 	}
 
-	// •`‰ææ‰æ–Ê‚ğ— ‰æ–Ê‚ÉƒZƒbƒg
+	// ï¿½`ï¿½ï¿½ï¿½ï¿½Ê‚ğ— ‰ï¿½Ê‚ÉƒZï¿½bï¿½g
 	SetDrawScreen(DX_SCREEN_BACK);
 	
 	Init();
@@ -69,10 +100,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// GameMainRoop
 	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
-		// ƒL[“ü—Íæ“¾
+		// ï¿½Lï¿½[ï¿½ï¿½ï¿½Íæ“¾
 		Key = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 
-		// ‰E‚ğ‰Ÿ‚µ‚Ä‚¢‚½‚ç‰E‚Éi‚Ş
+		// ï¿½Eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½Eï¿½Éiï¿½ï¿½
 		if (Key & PAD_INPUT_RIGHT)
 		{
 			playerMove.moveRightX();
@@ -80,13 +111,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			// OutputDebugString(tmp.c_str());
 		}
 
-		// ¶‚ğ‰Ÿ‚µ‚Ä‚¢‚½‚ç¶‚Éi‚Ş
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ç¶ï¿½Éiï¿½ï¿½
 		if (Key & PAD_INPUT_LEFT)
 		{
 			playerMove.moveLeftX();
 		}
 
-		// SPACEƒL[‚ğ‰Ÿ‚µ‚½‚ç’e”­Ë
+		// SPACEï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½eï¿½ï¿½ï¿½ï¿½
 		if (Key & PAD_INPUT_10)
 		{
 			if (roopCount % 6 == 0)
@@ -105,13 +136,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 		}
 
-		// ‰æ–Ê‚ğ‰Šú‰»‚·‚é
+		// ï¿½ï¿½Ê‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		ClearDrawScreen();
 
 		// show Player
 		DrawGraph(playerMove.getPlayerPos().x, playerMove.getPlayerPos().y, playerImage, true);
 
-		// ’e‚ÌˆÚ“®‚Æ•\¦
+		// ï¿½eï¿½ÌˆÚ“ï¿½ï¿½Æ•\ï¿½ï¿½
 		for (int i = 0; i < DEFINE.MAX_GUN_NUM; i++)
 		{
 			if (gun[i].getIsShot())
@@ -140,12 +171,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 		}
 
-		// — ‰æ–Ê‚Ì“à—e‚ğ•\‰æ–Ê‚É”½‰f‚³‚¹‚é
+		// ï¿½ï¿½ï¿½ï¿½Ê‚Ì“ï¿½ï¿½eï¿½ï¿½\ï¿½ï¿½Ê‚É”ï¿½ï¿½fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		ScreenFlip();
 
 		roopCount++;
 	}
 
 	DxLib_End();
-	return 0; // ƒ\ƒtƒg‚ÌI—¹
+	return 0; // ï¿½\ï¿½tï¿½gï¿½ÌIï¿½ï¿½
 }

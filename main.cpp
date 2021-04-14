@@ -1,6 +1,7 @@
 #include "DxLib.h"
 #include "PlayerMove.cpp"
 #include "GunMove.h"
+#include "Collision.h"
 #include "Enemy.h"
 #include <fstream>
 #include <iostream>
@@ -15,6 +16,7 @@ PlayerMove playerMove;
 vector<Enemy> enemy(5);
 Define DEFINE;
 vector<GunMove> gun(DEFINE.MAX_GUN_NUM);
+Collision col; // “–‚½‚è”»’èƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
 
 int gunImage = -1;
 int playerImage = -1;
@@ -22,6 +24,7 @@ int nomalEnemyImage = -1;
 int strongEnemyImage = -1;
 int enemyGunImage = -1;
 
+// init function
 void Init()
 {
 	Pos playerInitPos;
@@ -77,20 +80,20 @@ void Init()
 	}
 }
 
-// ï¿½vï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ WinMain ï¿½ï¿½ï¿½ï¿½nï¿½Ü‚ï¿½Ü‚ï¿½
+// MainWindow 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	// ï¿½ï¿½Êƒï¿½ï¿½[ï¿½hï¿½ÌƒZï¿½bï¿½g
+	// set Window size
 	SetGraphMode(DEFINE.WIDTH, DEFINE.HEIGHT, 16);
 	
-	// windowï¿½ï¿½ï¿½[ï¿½hï¿½Ftrue
+	// no full screen
 	ChangeWindowMode(true);
-	if (DxLib_Init() == -1)	// ï¿½cï¿½wï¿½ï¿½ï¿½Cï¿½uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	if (DxLib_Init() == -1)	// if DxLib_Init error return -1
 	{
-		return -1;	// ï¿½Gï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ç’¼ï¿½ï¿½ï¿½ÉIï¿½ï¿½
+		return -1;	// error exit
 	}
 
-	// ï¿½`ï¿½ï¿½ï¿½ï¿½Ê‚ğ— ‰ï¿½Ê‚ÉƒZï¿½bï¿½g
+	// set back screen
 	SetDrawScreen(DX_SCREEN_BACK);
 	
 	Init();
@@ -100,10 +103,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// GameMainRoop
 	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
-		// ï¿½Lï¿½[ï¿½ï¿½ï¿½Íæ“¾
+		// set key data
 		Key = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 
-		// ï¿½Eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½Eï¿½Éiï¿½ï¿½
+		// if right key pressed
 		if (Key & PAD_INPUT_RIGHT)
 		{
 			playerMove.moveRightX();
@@ -111,13 +114,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			// OutputDebugString(tmp.c_str());
 		}
 
-		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ç¶ï¿½Éiï¿½ï¿½
+		// if left key pressed
 		if (Key & PAD_INPUT_LEFT)
 		{
 			playerMove.moveLeftX();
 		}
 
-		// SPACEï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½eï¿½ï¿½ï¿½ï¿½
+		// if space key pressed
 		if (Key & PAD_INPUT_10)
 		{
 			if (roopCount % 6 == 0)
@@ -136,47 +139,54 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 		}
 
-		// ï¿½ï¿½Ê‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		// clear screen
 		ClearDrawScreen();
 
 		// show Player
 		DrawGraph(playerMove.getPlayerPos().x, playerMove.getPlayerPos().y, playerImage, true);
 
-		// ï¿½eï¿½ÌˆÚ“ï¿½ï¿½Æ•\ï¿½ï¿½
+		// move Player gun
 		for (int i = 0; i < DEFINE.MAX_GUN_NUM; i++)
 		{
 			if (gun[i].getIsShot())
 			{
+				for (int j = 0; j < 5; j++)
+				{
+					if (col.isCollision(gun[i].getGunPos(), enemy[j].getEnemyPos(), DEFINE.GUN_HEIGHT, DEFINE.ENEMY_HEIGHT))
+					{
+						enemy[j].setIsDead();
+					}
+				}
 				gun[i].move();
 				Pos gunPos = gun[i].getGunPos();
 				DrawGraph(gunPos.x, gunPos.y, gunImage, true);
 			}
 		}
 
+		// show and move enemy and enemy gun
 		for (int i = 0; i < 5; i++)
 		{
 			enemy[i].move(roopCount);
 			enemy[i].shotGun(roopCount);
-			if (enemy[i].getIsShow())
+			if (!enemy[i].getIsDead() && enemy[i].getIsShow())
 			{
 				Pos enemyPos = enemy[i].getEnemyPos();
 				DrawGraph(enemyPos.x, enemyPos.y, nomalEnemyImage, true);
 			}
 			for (int j = 0; j < 30; j++)
 			{
-				if (enemy[i].gunData[j].isShot)
+				if (!enemy[i].getIsDead() && enemy[i].gunData[j].isShot)
 				{
 					DrawGraph(enemy[i].gunData[j].gunPos.x, enemy[i].gunData[j].gunPos.y, enemyGunImage, true);
 				}
 			}
 		}
 
-		// ï¿½ï¿½ï¿½ï¿½Ê‚Ì“ï¿½ï¿½eï¿½ï¿½\ï¿½ï¿½Ê‚É”ï¿½ï¿½fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		ScreenFlip();
 
 		roopCount++;
 	}
 
 	DxLib_End();
-	return 0; // ï¿½\ï¿½tï¿½gï¿½ÌIï¿½ï¿½
+	return 0; // exit
 }

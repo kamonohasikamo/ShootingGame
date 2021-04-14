@@ -67,5 +67,8 @@
     <ClInclude Include="Pos.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

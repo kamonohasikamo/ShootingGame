@@ -134,6 +134,16 @@ public:
 //		}
 	}
 
+	void setIsDead()
+	{
+		isDead = true;
+	}
+
+	bool getIsDead()
+	{
+		return isDead;
+	}
+
 	void setEnemyPos(Pos pos)
 	{
 		enemyPos = pos;

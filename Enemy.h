@@ -2,6 +2,7 @@
 #include <iostream>
 #include "DxLib.h"
 #include <string>
+#include "Collision.h"
 #pragma once
 
 using namespace std;
@@ -42,7 +43,10 @@ protected:
 	int backTime;
 	bool isShow;
 	bool isDead;
+	bool isHit = false;
 public:
+	Collision col;
+	Pos playerPos;
 	EnemyGun gunData[30];
 	virtual void move(int frame)
 	{
@@ -115,6 +119,12 @@ public:
 		{
 			if (gunData[i].isShot)
 			{
+				if (col.isCollision(playerPos, gunData[i].gunPos, 30, 10))
+				{
+					gunData[i].isShot = false;
+					setIsHit();
+					continue;
+				}
 				gunData[i].gunPos.y += gunData[i].speed;
 				if (gunData[i].gunPos.x < -30
 					|| gunData[i].gunPos.x > 500
@@ -132,6 +142,21 @@ public:
 //		{
 
 //		}
+	}
+
+	void setIsHit()
+	{
+		isHit = true;
+	}
+
+	bool getIsHit()
+	{
+		return isHit;
+	}
+
+	void setPlayerPos(Pos pos)
+	{
+		playerPos = pos;
 	}
 
 	void setIsDead()

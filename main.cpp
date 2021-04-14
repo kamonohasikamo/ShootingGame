@@ -24,6 +24,8 @@ int nomalEnemyImage = -1;
 int strongEnemyImage = -1;
 int enemyGunImage = -1;
 
+bool isGameOver = false;
+
 // init function
 void Init()
 {
@@ -143,23 +145,35 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		ClearDrawScreen();
 
 		// show Player
-		DrawGraph(playerMove.getPlayerPos().x, playerMove.getPlayerPos().y, playerImage, true);
-
-		// move Player gun
-		for (int i = 0; i < DEFINE.MAX_GUN_NUM; i++)
+		for (int i = 0; i < 5; i++)
 		{
-			if (gun[i].getIsShot())
+			enemy[i].setPlayerPos(playerMove.getPlayerPos());
+			if (enemy[i].getIsHit())
 			{
-				for (int j = 0; j < 5; j++)
+				isGameOver = true;
+				break;
+			}
+		}
+
+		if (!isGameOver)
+		{
+			DrawGraph(playerMove.getPlayerPos().x, playerMove.getPlayerPos().y, playerImage, true);
+			// move Player gun
+			for (int i = 0; i < DEFINE.MAX_GUN_NUM; i++)
+			{
+				if (gun[i].getIsShot())
 				{
-					if (col.isCollision(gun[i].getGunPos(), enemy[j].getEnemyPos(), DEFINE.GUN_HEIGHT, DEFINE.ENEMY_HEIGHT))
+					for (int j = 0; j < 5; j++)
 					{
-						enemy[j].setIsDead();
+						if (col.isCollision(gun[i].getGunPos(), enemy[j].getEnemyPos(), DEFINE.GUN_HEIGHT, DEFINE.ENEMY_HEIGHT))
+						{
+							enemy[j].setIsDead();
+						}
 					}
+					gun[i].move();
+					Pos gunPos = gun[i].getGunPos();
+					DrawGraph(gunPos.x, gunPos.y, gunImage, true);
 				}
-				gun[i].move();
-				Pos gunPos = gun[i].getGunPos();
-				DrawGraph(gunPos.x, gunPos.y, gunImage, true);
 			}
 		}
 
